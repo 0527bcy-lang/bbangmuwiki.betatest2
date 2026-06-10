@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나무위키 스타일 프로필 생성기</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -134,6 +135,9 @@
         .wiki-section h3 { font-size: 19px; margin-top: 15px; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 2px; }
         .wiki-text-p { margin-bottom: 14px; text-align: justify; font-size: 14.5px; white-space: pre-wrap; }
 
+        /* 하이픈 스타일링 전용 */
+        .wiki-text-p.etc-p { padding-left: 15px; text-indent: -15px; }
+
         .spoiler-box { border: 1px solid #dbdbdb; margin: 10px 0 15px 0; width: 100%; border-collapse: collapse; font-size: 14px; }
         .spoiler-header { background-color: #373a3c; color: #fff; padding: 8px 12px; font-weight: bold; text-align: center; font-size: 13px; }
         .spoiler-toggle-btn { color: #5bc0de; text-decoration: none; margin-left: 10px; cursor: pointer; font-size: 12px; }
@@ -161,10 +165,6 @@
         .footnote { color: #0275d8; font-size: 11px; vertical-align: super; cursor: pointer; font-weight: bold; padding: 0 1px; }
         .footnote:hover { text-decoration: underline; }
         .footnote-popup { display: none; position: absolute; background: #373a3c; color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 12px; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); max-width: 250px; line-height: 1.4; word-break: break-all; }
-
-        /* 🚨 [새로 추가] 글자 수 초과 대피용 수동 주소창 스타일 */
-        .overflow-box { display: none; background: #fff3cd; border: 1px solid #ffeeba; padding: 15px; margin-top: 20px; border-radius: 4px; text-align: left; }
-        .overflow-box textarea { height: 70px; background: #fff; margin-top: 8px; font-size: 12px; color: #555; }
     </style>
 </head>
 <body>
@@ -315,20 +315,26 @@
         <button class="btn btn-add" onclick="addFormItem()">➕ 본문 문단 추가하기</button>
     </div>
 
+    <div class="wiki-section" id="section-etc-container">
+        <h2 class="result-view" id="view-etc-title">3. 기타</h2>
+        <div class="edit-view" style="margin-top:20px;">
+            <h3 style="font-size:16px; margin-bottom:10px; color:#333;">📌 기타 (맨 아래 고정 문단)</h3>
+            <textarea id="input-etc-body" placeholder="기타 내용을 입력하세요. 줄바꿈 시 자동으로 하이픈(-) 처리가 되며 리스트 형태로 분류됩니다."></textarea>
+            <label class="spoiler-checkbox-label">
+                <input type="checkbox" id="input-etc-spoiler"> ⚠️ 이 문단에 스포일러 주의 틀 씌우기
+            </label>
+        </div>
+        <div id="info-etc-content" class="result-view"></div>
+    </div>
+
     <div id="dynamic-result-container" class="result-view"></div>
 
     <div class="btn-container">
-        <button class="btn edit-view" onclick="generateLink()">완료 및 공유 링크 생성</button>
+        <button class="btn edit-view" onclick="generateCompressedLink()">완료 및 공유 링크 생성</button>
         <div class="result-view">
             <p style="margin-bottom: 10px; color: #28a745; font-weight: bold;">🎉 생성이 완료되었습니다!</p>
             <button class="btn btn-share" onclick="copyToClipboard()">🔗 주소 복사하기</button>
             <button class="btn btn-reset" onclick="location.href=window.location.pathname">➕ 새로 만들기</button>
-        </div>
-
-        <div id="overflow-area" class="overflow-box">
-            <strong style="color: #a94442;">⚠️ 안내: 작성된 내용이 너무 많아 주소창이 자동 차단되었습니다.</strong><br>
-            대신 아래 상자의 텍스트를 전체 선택(Ctrl+A) 후 복사(Ctrl+C)하여 친구에게 공유하면 정상적으로 위키를 열 수 있습니다!
-            <textarea id="overflow-url-text" readonly onclick="this.select()"></textarea>
         </div>
     </div>
 </div>
@@ -350,7 +356,7 @@
         }
     }
 
-    // 📷 이미지 가로폭을 180px로 초압축하여 주소창 용량 최적화
+    // 사진 용량을 최적화 압축하여 데이터 유실 원천 봉쇄
     function previewAndResizeImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -361,7 +367,7 @@
                     let width = img.width;
                     let height = img.height;
                     
-                    const MAX_WIDTH = 180; 
+                    const MAX_WIDTH = 150; 
                     if (width > MAX_WIDTH) {
                         height = Math.round((height * MAX_WIDTH) / width);
                         width = MAX_WIDTH;
@@ -372,7 +378,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    base64ImageStr = canvas.toDataURL('image/jpeg', 0.5); // 압축률 0.5 적용
+                    base64ImageStr = canvas.toDataURL('image/jpeg', 0.4); 
                     document.getElementById('info-img').src = base64ImageStr;
                 };
                 img.src = e.target.result;
@@ -404,7 +410,7 @@
                 <button class="btn-delete-section" onclick="deleteSection(this)">삭제</button>
             </div>
             <input type="text" class="section-title-input" placeholder="문단 제목" value="${title}">
-            <textarea class="section-body-input" placeholder="내용을 입력하세요."></textarea>
+            <textarea class="section-body-input" placeholder="내용을 입력하세요.">${body}</textarea>
             <label class="spoiler-checkbox-label"><input type="checkbox" class="section-spoiler-input" ${isSpoiler ? 'checked' : ''}> ⚠️ 이 문단에 스포일러 주의 틀 씌우기</label>
         `;
         container.appendChild(div);
@@ -417,6 +423,21 @@
             footnoteCount++;
             return html;
         });
+    }
+
+    // 하이픈(-) 자동 분류 및 배치 헬퍼 함수
+    function parseEtcLines(text) {
+        if (!text) return "";
+        const lines = text.split('\n');
+        const parsedLines = lines.map(line => {
+            let trimmed = line.trim();
+            if (!trimmed) return "";
+            if (!trimmed.startsWith('-')) {
+                trimmed = '- ' + trimmed;
+            }
+            return `<p class="wiki-text-p etc-p">${parseFootnotes(trimmed)}</p>`;
+        });
+        return parsedLines.join('');
     }
 
     function buildSpoilerHtml(contentHtml) {
@@ -434,7 +455,6 @@
     }
 
     function bindDragEvents(item) {
-        const handle = item.querySelector('.drag-handle');
         item.addEventListener('dragstart', () => item.classList.add('dragging'));
         item.addEventListener('dragend', () => item.classList.remove('dragging'));
     }
@@ -455,114 +475,157 @@
         }
     }
 
-    window.onload = function() {
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('title')) {
-            document.body.classList.add('readonly');
-            const themeColor = params.get('color') || '#008080';
-            updateThemeColor(themeColor);
-            
-            savedPasswordHash = params.get('pwd') || "";
-            document.getElementById('input-title').value = params.get('title');
-            document.getElementById('view-title').innerText = params.get('title');
-            document.getElementById('view-category').innerText = params.get('category') || '';
-            document.getElementById('view-date').innerText = `최근 수정 시각: ${params.get('date') || '-'}`;
-
-            document.getElementById('info-name-main').innerText = params.get('n_main') || '';
-            document.getElementById('info-name-sub').innerText = params.get('n_sub') || '';
-
-            if (params.get('img_b64')) {
-                base64ImageStr = params.get('img_b64');
-                document.getElementById('info-img').src = base64ImageStr;
-            }
-
-            document.getElementById('info-realname').innerText = params.get('realname') || '-';
-            document.getElementById('info-gender').innerText = params.get('gender') || '-';
-            document.getElementById('info-hobby').innerText = params.get('hobby') || '-';
-            document.getElementById('info-age').innerText = params.get('age') || '-';
-            document.getElementById('info-quote').innerText = params.get('quote') || '';
-            
-            const baseDesc = params.get('body_1') || '';
-            const baseParsedHtml = `<p class="wiki-text-p">${parseFootnotes(baseDesc)}</p>`;
-            document.getElementById('info-section-content-1').innerHTML = (params.get('sp_1') === 'y') ? buildSpoilerHtml(baseParsedHtml) : baseParsedHtml;
-
-            const customKeys = params.getAll('cust_key');
-            const customVals = params.getAll('cust_val');
-            const tbody = document.getElementById('infobox-tbody');
-            customKeys.forEach((key, idx) => {
-                const val = customVals[idx] || "";
-                const tr = document.createElement('tr');
-                tr.className = "result-view"; 
-                tr.innerHTML = `<td class="attr-name">${key}</td><td>${parseFootnotes(val)}</td>`;
-                tbody.appendChild(tr);
-            });
-
-            const titles = params.getAll('sec_title');
-            const bodies = params.getAll('sec_body');
-            const spoilers = params.getAll('sec_spoiler');
-            const resultContainer = document.getElementById('dynamic-result-container');
-            
-            titles.forEach((title, i) => {
-                const bodyText = bodies[i] || '';
-                const sectionDiv = document.createElement('div');
-                sectionDiv.className = 'wiki-section';
-                let innerContentHtml = `<p class="wiki-text-p">${parseFootnotes(bodyText)}</p>`;
-                if (spoilers[i] === 'y') innerContentHtml = buildSpoilerHtml(innerContentHtml);
-                sectionDiv.innerHTML = `<h2>${title}</h2><div>${innerContentHtml}</div>`;
-                resultContainer.appendChild(sectionDiv);
-            });
-        }
-    };
-
-    function generateLink() {
+    // 🔥 기존 양식 원본 데이터를 통째로 안전하게 LZ 압축합니다.
+    function generateCompressedLink() {
         const title = document.getElementById('input-title').value.trim();
         if (!title) return alert('제목 필수!');
 
-        const params = new URLSearchParams();
-        params.set('title', title);
-        params.set('category', document.getElementById('input-category').value.trim());
-        params.set('color', document.getElementById('input-color').value);
-        params.set('pwd', btoa(encodeURIComponent(document.getElementById('input-password').value)));
-        params.set('date', new Date().toLocaleString());
-        params.set('n_main', document.getElementById('input-name-main').value.trim());
-        params.set('n_sub', document.getElementById('input-name-sub').value.trim());
-        if (base64ImageStr) params.set('img_b64', base64ImageStr);
-
-        params.set('realname', document.getElementById('input-realname').value.trim());
-        params.set('gender', document.getElementById('input-gender').value.trim());
-        params.set('hobby', document.getElementById('input-hobby').value.trim());
-        params.set('age', document.getElementById('input-age').value.trim());
-        params.set('quote', document.getElementById('input-quote').value.trim());
-        params.set('body_1', document.getElementById('input-section-body-1').value);
-        params.set('sp_1', document.getElementById('input-section-spoiler-1').checked ? 'y' : 'n');
+        const rawData = {
+            title: title,
+            category: document.getElementById('input-category').value.trim(),
+            color: document.getElementById('input-color').value,
+            pwd: btoa(encodeURIComponent(document.getElementById('input-password').value)),
+            date: new Date().toLocaleString(),
+            n_main: document.getElementById('input-name-main').value.trim(),
+            n_sub: document.getElementById('input-name-sub').value.trim(),
+            img: base64ImageStr,
+            realname: document.getElementById('input-realname').value.trim(),
+            gender: document.getElementById('input-gender').value.trim(),
+            hobby: document.getElementById('input-hobby').value.trim(),
+            age: document.getElementById('input-age').value.trim(),
+            quote: document.getElementById('input-quote').value.trim(),
+            body_1: document.getElementById('input-section-body-1').value,
+            sp_1: document.getElementById('input-section-spoiler-1').checked ? 'y' : 'n',
+            body_etc: document.getElementById('input-etc-body').value,
+            sp_etc: document.getElementById('input-etc-spoiler').checked ? 'y' : 'n',
+            customs: [],
+            sections: []
+        };
 
         document.querySelectorAll('.info-edit-item').forEach(item => {
-            params.append('cust_key', item.querySelectorAll('input')[0].value);
-            params.append('cust_val', item.querySelectorAll('input')[1].value);
+            rawData.customs.push({ k: item.querySelectorAll('input')[0].value, v: item.querySelectorAll('input')[1].value });
         });
 
         document.querySelectorAll('.dynamic-form-item').forEach(item => {
-            params.append('sec_title', item.querySelector('.section-title-input').value);
-            params.append('sec_body', item.querySelector('.section-body-input').value);
-            params.append('sec_spoiler', item.querySelector('.section-spoiler-input').checked ? 'y' : 'n');
+            rawData.sections.push({
+                t: item.querySelector('.section-title-input').value,
+                b: item.querySelector('.section-body-input').value,
+                s: item.querySelector('.section-spoiler-input').checked ? 'y' : 'n'
+            });
         });
 
-        const finalUrl = window.location.origin + window.location.pathname + '?' + params.toString();
-
-        // 🚨 글자 수가 너무 길어 브라우저가 이동 처리를 거절할 때 대피 로직 작동
-        if (finalUrl.length > 7000) {
-            document.getElementById('overflow-area').style.display = 'block';
-            document.getElementById('overflow-url-text').value = finalUrl;
-            alert("⚠️ 작성량이 많아 수동 주소창이 하단에 생성되었습니다! 하단 노란 상자의 텍스트를 복사해 공유하세요.");
-        } else {
-            window.location.href = finalUrl;
-        }
+        const jsonStr = JSON.stringify(rawData);
+        const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+        
+        window.location.href = window.location.origin + window.location.pathname + '?d=' + compressed;
     }
 
+    // 🔗 주소창 파싱 및 기존 규칙 복원 처리
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('d')) {
+            document.body.classList.add('readonly');
+            
+            const compressedData = params.get('d');
+            const jsonStr = LZString.decompressFromEncodedURIComponent(compressedData);
+            if(!jsonStr) { alert("데이터 해독 실패!"); return; }
+            
+            const data = JSON.parse(jsonStr);
+            updateThemeColor(data.color || '#008080');
+            savedPasswordHash = data.pwd || "";
+
+            document.getElementById('input-title').value = data.title;
+            document.getElementById('view-title').innerText = data.title;
+            document.getElementById('view-category').innerText = data.category || '';
+            document.getElementById('view-date').innerText = `최근 수정 시각: ${data.date || '-'}`;
+
+            document.getElementById('info-name-main').innerText = data.n_main || '';
+            document.getElementById('info-name-sub').innerText = data.n_sub || '';
+
+            if (data.img) {
+                base64ImageStr = data.img;
+                document.getElementById('info-img').src = base64ImageStr;
+            }
+
+            document.getElementById('info-realname').innerText = data.realname || '-';
+            document.getElementById('info-gender').innerText = data.gender || '-';
+            document.getElementById('info-hobby').innerText = data.hobby || '-';
+            document.getElementById('info-age').innerText = data.age || '-';
+            document.getElementById('info-quote').innerText = data.quote || '';
+            
+            // 1. 개요 복원
+            document.getElementById('input-section-body-1').value = data.body_1 || '';
+            const baseParsedHtml = `<p class="wiki-text-p">${parseFootnotes(data.body_1 || '')}</p>`;
+            document.getElementById('info-section-content-1').innerHTML = (data.sp_1 === 'y') ? buildSpoilerHtml(baseParsedHtml) : baseParsedHtml;
+
+            // 추가 프로필 커스텀 복원
+            if(data.customs) {
+                const tbody = document.getElementById('infobox-tbody');
+                data.customs.forEach(c => {
+                    addCustomAttrForm(c.k, c.v);
+                    const tr = document.createElement('tr');
+                    tr.className = "result-view"; 
+                    tr.innerHTML = `<td class="attr-name">${c.k}</td><td>${parseFootnotes(c.v)}</td>`;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // 추가 동적 본문 문단 원본 형태 그대로 안전 복원
+            const tocTarget = document.getElementById('view-toc');
+            const resultContainer = document.getElementById('dynamic-result-container');
+            
+            // 목차 초기화 링크 배치
+            const liBase = document.createElement('li');
+            liBase.innerHTML = `<span class="toc-num">1.</span>개요`;
+            tocTarget.appendChild(liBase);
+
+            let totalSectionsNum = 1;
+
+            if(data.sections) {
+                document.getElementById('dynamic-form-container').innerHTML = '';
+                data.sections.forEach((sec, i) => {
+                    addFormItem(sec.t, sec.b, sec.s === 'y');
+
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="toc-num">${i+2}.</span>${sec.t}`;
+                    tocTarget.appendChild(li);
+
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'wiki-section';
+                    let innerContentHtml = `<p class="wiki-text-p">${parseFootnotes(sec.b || '')}</p>`;
+                    if (sec.s === 'y') innerContentHtml = buildSpoilerHtml(innerContentHtml);
+                    sectionDiv.innerHTML = `<h2>${i+2}. ${sec.t}</h2><div>${innerContentHtml}</div>`;
+                    resultContainer.appendChild(sectionDiv);
+                    
+                    totalSectionsNum++;
+                });
+            }
+
+            // 📌 [기타 복원] 무조건 원칙에 따라 최하단 순서로 목차 및 결과창 세팅
+            totalSectionsNum++;
+            document.getElementById('input-etc-body').value = data.body_etc || '';
+            document.getElementById('input-etc-spoiler').checked = (data.sp_etc === 'y');
+            document.getElementById('view-etc-title').innerText = `${totalSectionsNum}. 기타`;
+
+            const liEtc = document.createElement('li');
+            liEtc.innerHTML = `<span class="toc-num">${totalSectionsNum}.</span>기타`;
+            tocTarget.appendChild(liEtc);
+
+            const etcParsedHtml = parseEtcLines(data.body_etc || '');
+            document.getElementById('info-etc-content').innerHTML = (data.sp_etc === 'y') ? buildSpoilerHtml(etcParsedHtml) : etcParsedHtml;
+
+            // 결과 모드에서는 기타 섹션 폼 자체를 동적 컨테이너 뒤로 수동으로 옮김 (완벽한 맨 아래 유지)
+            const etcContainer = document.getElementById('section-etc-container');
+            resultContainer.parentNode.insertBefore(etcContainer, resultContainer.nextSibling);
+
+        } else {
+            // 주소 파라미터가 없는 첫 진입 상태일 때 기본 드래그 앤 드롭 아이템 이벤트 매핑 보존
+            document.querySelectorAll('.dynamic-form-item').forEach(item => bindDragEvents(item));
+        }
+    };
+
     function copyToClipboard() {
-        const customTxt = document.getElementById('overflow-url-text').value;
-        const targetUrl = customTxt ? customTxt : window.location.href;
-        navigator.clipboard.writeText(targetUrl).then(() => alert('복사 완료!'));
+        navigator.clipboard.writeText(window.location.href).then(() => alert('기타 칸 보존 완료 및 압축 링크가 복사되었습니다! 카카오톡 등 어디에나 바로 공유해 보세요.'));
     }
 
     function showPopup(event, text) {
