@@ -129,7 +129,7 @@
         .guide-box label { font-weight: bold; margin-right: 10px; color: #373a3c; }
         input[type="color"] { vertical-align: middle; width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
         .pwd-input-group { display: inline-block; margin-left: 15px; }
-        .pwd-input-group input { width: 120px; padding: 4px; font-size: 12px; border: 1px solid #ccc; border-radius: 3px; }
+        .pwd-input-group input { width: 120px; padding: 4px; font-size: 12px; border: 1px solid #f0ad4e; border-radius: 3px; background-color: #fff3cd; }
 
         .recommend-url-box { background-color: #f0f7ff; border: 1px solid #b3d7ff; padding: 10px; border-radius: 4px; margin-top: 8px; font-size: 13px; color: #004085; }
         .recommend-url-box a { color: #0056b3; font-weight: bold; text-decoration: none; }
@@ -202,15 +202,17 @@
         .modal-section h4 { margin-bottom: 5px; color: #111; font-weight: bold; }
         .modal-section ul { padding-left: 18px; margin-top: 4px; }
         .modal-section li { margin-bottom: 3px; }
-        .modal-close-btn { background: var(--theme-color); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
-        .modal-close-btn:hover { filter: brightness(0.9); }
+        
+        /* 모달 제어용 상시 활성화 버튼 */
+        .modal-btn { background: var(--theme-color); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .modal-btn:hover { filter: brightness(0.9); }
         
         /* 단축 링크 전용 모달 양식 */
         .url-display-box { background: #f8f9fa; border: 1px solid #ccc; padding: 10px; font-size: 12px; max-height: 80px; overflow-y: auto; word-break: break-all; margin: 10px 0; border-radius: 4px; color: #666; user-select: all; }
         .buly-link-btn { display: inline-block; background-color: #28a745; color: white !important; text-decoration: none; padding: 8px 15px; font-weight: bold; border-radius: 4px; margin-top: 5px; font-size: 13px; }
         .buly-link-btn:hover { background-color: #218838; }
         
-        /* 주소 복사용 임시 텍스트 영역 숨김 처리 */
+        /* 클립보드 복사 백업용 히든 필드 */
         #hidden-clip-area { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; opacity: 0; }
     </style>
 </head>
@@ -223,26 +225,21 @@
         <div class="modal-title">📝 나무위키 프로필 생성기 사용 방법 안내</div>
         
         <div class="modal-section">
-            <h4 style="color: #d9534f;">🔒 문서 비밀번호 설정 권장</h4>
-            <p style="color: #d9534f; font-weight: bold;">비밀번호는 암호화 처리 후 유일 키로 보관되므로 생성 후에는 변경 및 재확인이 아예 불가능합니다! 분실 우려가 있으니 반드시 따로 안전하게 기록해 두시기 바랍니다.</p>
+            <h4 style="color: #d9534f;">🔒 문서 비밀번호 필수 설정</h4>
+            <p style="color: #d9534f; font-weight: bold;">타인이 문단을 무단 수정하는 것을 막기 위해 비밀번호 입력이 필수로 변경되었습니다. 암호화 저장되므로 분실 시 재확인이 불가하니 꼭 기억하세요!</p>
         </div>
 
         <div class="modal-section">
             <h4>📌 각주(설명 팝업) 넣는 법</h4>
-            <p>본문 내용 중 설명이나 보충을 넣고 싶은 단어 바로 뒤에 <code>[여기에 각주 내용 입력]</code> 형태로 대괄호를 붙여 기입하세요. 결과창에서 터치 시 말풍선 팝업이 작동하며 맨 아래 둘러보기 창에 리스트업됩니다.</p>
+            <p>본문 내용 중 설명이나 보충을 넣고 싶은 단어 바로 뒤에 <code>[여기에 각주 내용 입력]</code> 형태로 대괄호를 붙여 기입하세요.</p>
         </div>
 
         <div class="modal-section">
-            <h4>📂 하위 소제목(X.Y) 만드는 법</h4>
-            <p>아래 '추가 본문 및 하위 소제목 관리창'에서 대문단을 만들고 <b>[내부 하위 소제목 추가]</b> 버튼을 누르세요. 제목 앞에 임의로 번호를 적지 않아도 완성 시 시스템이 <code>1.1</code>, <code>2.1</code> 형태로 번호를 자동 계산하여 연동 및 접기 상자를 제공합니다.</p>
+            <h4>🖼️ 사진 링크 주소 넣는 법</h4>
+            <p>인터넷 이미지 변환 도구를 통해 추출된 <code>https://...</code> 주소를 프로필 이미지 칸에 기입해 주셔야 실시간 노출됩니다.</p>
         </div>
 
-        <div class="modal-section">
-            <h4>🖼️ 사진(프로필 이미지) 링크 주소 넣는 법</h4>
-            <p>컴퓨터나 스마트폰에 있는 파일은 직접 올릴 수 없습니다. 사진 변환 변환기 등을 통해 추출된 <code>https://...</code> 주소를 프로필 이미지 칸에 기입해 주셔야 실시간 노출됩니다.</p>
-        </div>
-
-        <button class="modal-close-btn" onclick="closeGuideModal()">가이드를 확인했으며 작성을 시작하겠습니다</button>
+        <button type="button" class="modal-btn" onclick="closeGuideModal()">가이드를 확인했으며 작성을 시작하겠습니다</button>
     </div>
 </div>
 
@@ -257,17 +254,17 @@
             <p style="color: #444;">아래 초록색 버튼을 눌러 <b>buly.kr</b> 사이트로 이동하신 뒤, 복사한 긴 링크를 붙여넣어 <b>짧은 단축 링크</b>로 변환해서 사용하시기를 강력히 권장합니다!</p>
             
             <div style="text-align: center; margin-top: 15px; display: flex; gap: 8px; justify-content: center;">
-                <button class="btn" style="padding: 8px 15px; font-size:13px; background:#007bff;" onclick="copyModalUrl()">📋 긴 주소 우선 복사</button>
+                <button type="button" class="modal-action-trigger" style="padding: 8px 15px; font-size:13px; background:#007bff; color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="copyModalUrl()">📋 긴 주소 우선 복사</button>
                 <a href="https://buly.kr" target="_blank" class="buly-link-btn">➡️ buly.kr 사이트 이동</a>
             </div>
         </div>
-        <button class="modal-close-btn" style="background:#6c757d; margin-top: 15px;" onclick="closeLinkModal()">닫기</button>
+        <button type="button" class="modal-btn" style="background:#6c757d; margin-top: 15px;" onclick="closeLinkModal()">닫기</button>
     </div>
 </div>
 
 <div class="wiki-container">
     <div class="top-utility-bar edit-view">
-        <button class="btn-open-guide" onclick="openGuideModal()">💡 사용 방법 안내 다시보기</button>
+        <button type="button" class="btn-open-guide" onclick="openGuideModal()">💡 사용 방법 안내 다시보기</button>
     </div>
 
     <div id="view-date" class="last-modified result-view"></div>
@@ -278,7 +275,7 @@
             <span id="view-title" class="result-view">제목 없음</span>
         </h1>
         <div class="edit-btn-box result-view">
-            <button class="btn-mini-edit" onclick="checkPasswordToEdit()">수정</button>
+            <button type="button" class="btn-mini-edit" onclick="checkPasswordToEdit()">수정</button>
         </div>
     </div>
 
@@ -296,12 +293,12 @@
             <input type="color" id="input-color" value="#008080" onchange="updateThemeColor(this.value)">
             
             <div class="pwd-input-group">
-                <label for="input-password">🔑 문서 비밀번호:</label>
-                <input type="text" id="input-password" placeholder="수정용 암호 설정" maxlength="12">
+                <label for="input-password" style="color:#d9534f;">⚠️ 필수 비밀번호:</label>
+                <input type="text" id="input-password" placeholder="필수 암호 설정" maxlength="12">
             </div>
         </div>
         <div class="recommend-url-box">
-            🔗 <b>사진 링크 변환 추천:</b> 이미지를 인터넷 링크 주소로 바꾸려면 <a href="https://pages.edgeone.ai/ko/use-cases/image-to-url" target="_blank">[EdgeOne 이미지 URL 변환 도구]</a> 사이트를 이용하여 주소를 확보한 뒤 아래 칸에 넣어주세요.
+            🔗 <b>사진 링크 변환 추천:</b> 이미지를 인터넷 링크 주소로 바꾸려면 <a href="https://pages.edgeone.ai/ko/use-cases/image-to-url" target="_blank">[EdgeOne 이미지 URL 변환 도구]</a> 사이트를 이용해 주세요.
         </div>
     </div>
 
@@ -392,11 +389,10 @@
         <div class="quote-box">
             <div class="edit-view" style="margin-bottom:8px;"><input type="text" id="input-quote" placeholder="명대사나 인용구 내용을 입력하세요"></div>
             <div id="info-quote" class="result-view" style="font-weight: bold;"></div>
-            
             <div id="info-quote-sub" class="quote-subtext result-view"></div>
         </div>
         <div class="edit-view">
-            <input type="text" id="input-quote-sub" placeholder="대사 상자 내부에 함께 표출될 작은 글씨 부가설명 (예: 3화 내용 중)" style="font-size: 12px;">
+            <input type="text" id="input-quote-sub" placeholder="대사 상자 내부에 함께 표출될 작은 글씨 부가설명" style="font-size: 12px;">
         </div>
 
         <div class="edit-view">
@@ -412,7 +408,7 @@
     <div class="edit-view" style="margin-top: 20px; border-top: 1px solid #bbb; padding-top: 15px;">
         <h3 style="font-size:16px; margin-bottom:10px; color:#111;">📝 추가 본문 및 하위 소제목 관리창</h3>
         <div id="main-section-builder-container"></div>
-        <button class="btn btn-add-main" onclick="addMainSectionGroup()">📂 새 대문단 추가하기</button>
+        <button type="button" class="btn btn-add-main" onclick="addMainSectionGroup()">📂 새 대문단 추가하기</button>
     </div>
 
     <div id="dynamic-result-container" class="result-view"></div>
@@ -421,7 +417,7 @@
         <h2 class="result-view" id="view-etc-title">3. 기타</h2>
         <div class="edit-view" style="margin-top:20px;">
             <h3 style="font-size:16px; margin-bottom:10px; color:#333;">📌 기타 (맨 아래 고정 문단)</h3>
-            <textarea id="input-etc-body" placeholder="기타 내용을 입력하세요. 줄바꿈 시 자동으로 하이픈(-) 처리가 되며 리스트 형태로 분류됩니다."></textarea>
+            <textarea id="input-etc-body" placeholder="기타 내용을 입력하세요. 줄바꿈 시 자동으로 하이픈(-) 처리가 됩니다."></textarea>
             <label class="spoiler-checkbox-label">
                 <input type="checkbox" id="input-etc-spoiler"> ⚠️ 이 문단에 스포일러 주의 틀 씌우기
             </label>
@@ -435,11 +431,11 @@
     </div>
 
     <div class="btn-container">
-        <button class="btn edit-view" onclick="generateCompressedLink()">완료 및 공유 링크 생성</button>
+        <button type="button" class="btn edit-view" onclick="generateCompressedLink()">완료 및 공유 링크 생성</button>
         <div id="final-action-block" class="result-view">
             <p style="margin-bottom: 10px; color: #28a745; font-weight: bold;">🎉 생성이 완료되었습니다!</p>
-            <button class="btn btn-share" onclick="openLinkModal()">🔗 주소 관리 및 단축하기</button>
-            <button class="btn btn-reset" onclick="location.href=window.location.pathname">➕ 새로 만들기</button>
+            <button type="button" class="btn btn-share" onclick="openLinkModal()">🔗 주소 관리 및 단축하기</button>
+            <button type="button" class="btn btn-reset" onclick="location.href=window.location.pathname">➕ 새로 만들기</button>
         </div>
     </div>
 </div>
@@ -471,7 +467,7 @@
         contentTd.style.display = (contentTd.style.display === 'none') ? 'block' : 'none';
     }
 
-    // 모달 제어 함수 버그 전면 수정 완료
+    /* 팝업 모달 작동 버그 전면 수정 */
     function openGuideModal() { document.getElementById('guideModal').style.display = 'flex'; }
     function closeGuideModal() { document.getElementById('guideModal').style.display = 'none'; }
     
@@ -481,29 +477,28 @@
     }
     function closeLinkModal() { document.getElementById('linkModal').style.display = 'none'; }
     
-    // 모바일 및 유효 브라우저 크로스 브라우징용 예외 우회 주소 복사 핵심 로직
+    /* iOS 및 하위 모바일 환경 완벽 대응 클립보드 복사 백업 우회 처리 */
     function copyModalUrl() {
         const copyText = window.location.href;
         const hiddenArea = document.getElementById('hidden-clip-area');
         
         hiddenArea.value = copyText;
+        hiddenArea.focus();
         hiddenArea.select();
-        hiddenArea.setSelectionRange(0, 99999); // 모바일 기기 대응 선택 범위 지정
+        hiddenArea.setSelectionRange(0, 99999);
 
         try {
-            // execCommand 스크립트 실행 백업 연동
             const successful = document.execCommand('copy');
             if(successful) {
                 alert('긴 주소가 성공적으로 복사되었습니다! buly.kr 사이트에 붙여넣어 단축해 주세요.');
             } else {
-                throw new Error('Fallback failed');
+                throw new Error('execCommand 실패');
             }
         } catch (err) {
-            // navigator 기반 2차 백업 연동
             navigator.clipboard.writeText(copyText).then(() => {
                 alert('긴 주소가 성공적으로 복사되었습니다! buly.kr 사이트에 붙여넣어 단축해 주세요.');
             }).catch(() => {
-                alert('복사에 실패했습니다. 주소 상자의 텍스트를 전체 선택하여 수동으로 복사해 주세요.');
+                alert('브라우저 보안으로 자동 복사가 차단되었습니다. 주소창의 긴 문자열을 전체선택해 수동 복사바랍니다.');
             });
         }
     }
@@ -528,14 +523,14 @@
         div.innerHTML = `
             <div class="drag-header-bar">
                 <div class="drag-handle">☰ 위아래 드래그로 문단 배치 순서 변경</div>
-                <button class="btn-delete-section" onclick="if(confirm('대문단 전체를 삭제하시겠습니까?')) this.parentElement.parentElement.remove()">대문단 삭제</button>
+                <button type="button" class="btn-delete-section" onclick="if(confirm('대문단 전체를 삭제하시겠습니까?')) this.parentElement.parentElement.remove()">대문단 삭제</button>
             </div>
             <div style="margin-bottom: 8px;">
                 <span style="font-weight: bold; font-size:14px;">📁 대문단 제목:</span>
-                <input type="text" class="main-title-input" value="${title}" placeholder="예: 특징 (숫자 제외)" style="width: 70%; display: inline-block; margin-left: 10px; margin-bottom:0;">
+                <input type="text" class="main-title-input" value="${title}" placeholder="예: 특징" style="width: 70%; display: inline-block; margin-left: 10px; margin-bottom:0;">
             </div>
             <div class="subsections-basket"></div>
-            <button class="btn" style="background:#6c757d; font-size:11px; padding:4px 8px; border:none; margin-top:5px;" onclick="addSubSectionField(this)">➕ 내부 하위 소제목 추가</button>
+            <button type="button" class="btn" style="background:#6c757d; font-size:11px; padding:4px 8px; border:none; margin-top:5px;" onclick="addSubSectionField(this)">➕ 내부 하위 소제목 추가</button>
         `;
         container.appendChild(div);
         bindDragEvents(div);
@@ -546,8 +541,8 @@
         const div = document.createElement('div');
         div.className = 'subsection-item-box';
         div.innerHTML = `
-            <button class="btn-delete-section" onclick="this.parentElement.remove()">소제목 삭제</button>
-            <input type="text" class="sub-title-input" value="${subTitle}" placeholder="소제목 타이틀 (예: 외모)" style="margin-bottom: 5px;">
+            <button type="button" class="btn-delete-section" onclick="this.parentElement.remove()">소제목 삭제</button>
+            <input type="text" class="sub-title-input" value="${subTitle}" placeholder="소제목 타이틀" style="margin-bottom: 5px;">
             <textarea class="sub-body-input" placeholder="내용을 입력하세요.">${subBody}</textarea>
             <label class="spoiler-checkbox-label"><input type="checkbox" class="sub-spoiler-input" ${isSpoiler ? 'checked' : ''}> 이 문단에 스포일러 주의 틀 씌우기</label>
         `;
@@ -599,8 +594,9 @@
         }
     });
 
+    /* 잠금 상태 제어 시 모달창 내부 전용 클래스(.modal-btn, .modal-action-trigger)는 제외하여 닫기 먹통 방지 */
     function setInputsDisabled(status) {
-        document.querySelectorAll("input, textarea, button:not(.btn-mini-edit):not(.btn-share):not(.btn-reset):not(.btn-open-guide)").forEach(el => {
+        document.querySelectorAll("input, textarea, button:not(.btn-mini-edit):not(.btn-share):not(.btn-reset):not(.btn-open-guide):not(.modal-btn):not(.modal-action-trigger)").forEach(el => {
             el.disabled = status;
         });
     }
@@ -612,7 +608,7 @@
             document.body.classList.remove('readonly');
             setInputsDisabled(false);
             document.getElementById('renderLoopBox').style.display = 'none'; 
-            document.getElementById('final-action-block').style.display = 'none'; // 하단 제어창 숨김
+            document.getElementById('final-action-block').style.display = 'none';
         } else {
             alert("비밀번호가 일치하지 않습니다. 수정할 수 없습니다.");
         }
@@ -622,11 +618,19 @@
         const title = document.getElementById('input-title').value.trim();
         if (!title) return alert('제목은 필수 입력 요소입니다!');
 
+        /* 제목 외 비밀번호 설정 필수 예외 벨리데이션 추가 */
+        const password = document.getElementById('input-password').value.trim();
+        if (!password) {
+            alert('🔒 타인의 무단 수정을 막기 위해 비밀번호 설정은 필수입니다!\n인포박스 상단 가이드 레이아웃 우측의 비밀번호 칸을 채워주세요.');
+            document.getElementById('input-password').focus();
+            return;
+        }
+
         const rawData = {
             title: title,
             category: document.getElementById('input-category').value.trim(),
             color: document.getElementById('input-color').value,
-            pwd: btoa(encodeURIComponent(document.getElementById('input-password').value)),
+            pwd: btoa(encodeURIComponent(password)),
             date: new Date().toLocaleString(),
             n_main: document.getElementById('input-name-main').value.trim(),
             n_sub: document.getElementById('input-name-sub').value.trim(),
