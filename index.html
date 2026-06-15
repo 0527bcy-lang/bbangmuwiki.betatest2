@@ -119,17 +119,6 @@
             width: 50% !important;
         }
 
-        /* 결과창 내 클릭 즉시 수정 가능 항목 표시 */
-        body.readonly .editable-click-field {
-            cursor: pointer;
-        }
-        body.readonly .editable-click-field:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-        body.readonly .attr-name.editable-click-field:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
         .info-edit-item { background: #f9f9f9; padding: 6px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 4px; display: flex; gap: 5px; align-items: center; }
         .info-edit-item input { margin-bottom: 0 !important; }
         .btn-delete-attr { background: #d9534f; color: white; border: none; padding: 4px 8px; font-size: 11px; border-radius: 3px; cursor: pointer; }
@@ -215,9 +204,19 @@
         .modal-section li { margin-bottom: 3px; }
         .modal-close-btn { background: var(--theme-color); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
         .modal-close-btn:hover { filter: brightness(0.9); }
+        
+        /* 단축 링크 전용 모달 양식 */
+        .url-display-box { background: #f8f9fa; border: 1px solid #ccc; padding: 10px; font-size: 12px; max-height: 80px; overflow-y: auto; word-break: break-all; margin: 10px 0; border-radius: 4px; color: #666; user-select: all; }
+        .buly-link-btn { display: inline-block; background-color: #28a745; color: white !important; text-decoration: none; padding: 8px 15px; font-weight: bold; border-radius: 4px; margin-top: 5px; font-size: 13px; }
+        .buly-link-btn:hover { background-color: #218838; }
+        
+        /* 주소 복사용 임시 텍스트 영역 숨김 처리 */
+        #hidden-clip-area { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; opacity: 0; }
     </style>
 </head>
 <body>
+
+<textarea id="hidden-clip-area" readonly></textarea>
 
 <div id="guideModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
@@ -244,6 +243,25 @@
         </div>
 
         <button class="modal-close-btn" onclick="closeGuideModal()">가이드를 확인했으며 작성을 시작하겠습니다</button>
+    </div>
+</div>
+
+<div id="linkModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 480px;">
+        <div class="modal-title">🔗 공유 링크 생성 완료</div>
+        <div class="modal-section" style="font-size: 13px;">
+            <p>데이터가 포함된 고유 프로필 링크가 정상 발급되었습니다. 다만, 시스템 데이터 용량으로 인해 <b>아래 링크 주소가 매우 깁니다.</b></p>
+            <div id="modal-url-text" class="url-display-box"></div>
+            
+            <p style="margin-top: 12px; color: #d9534f; font-weight: bold;">⚠️ 필독 사항:</p>
+            <p style="color: #444;">아래 초록색 버튼을 눌러 <b>buly.kr</b> 사이트로 이동하신 뒤, 복사한 긴 링크를 붙여넣어 <b>짧은 단축 링크</b>로 변환해서 사용하시기를 강력히 권장합니다!</p>
+            
+            <div style="text-align: center; margin-top: 15px; display: flex; gap: 8px; justify-content: center;">
+                <button class="btn" style="padding: 8px 15px; font-size:13px; background:#007bff;" onclick="copyModalUrl()">📋 긴 주소 우선 복사</button>
+                <a href="https://buly.kr" target="_blank" class="buly-link-btn">➡️ buly.kr 사이트 이동</a>
+            </div>
+        </div>
+        <button class="modal-close-btn" style="background:#6c757d; margin-top: 15px;" onclick="closeLinkModal()">닫기</button>
     </div>
 </div>
 
@@ -314,43 +332,43 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="attr-name editable-click-field" onclick="switchToEditModeDirectly()">
+                    <td class="attr-name">
                         <div class="edit-view"><input type="text" id="lbl-realname" value="본명"></div>
                         <span id="view-lbl-realname" class="result-view">본명</span>
                     </td>
                     <td>
                         <div class="edit-view"><input type="text" id="input-realname"></div>
-                        <div id="info-realname" class="result-view editable-click-field" onclick="switchToEditModeDirectly()"></div>
+                        <div id="info-realname" class="result-view"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td class="attr-name editable-click-field" onclick="switchToEditModeDirectly()">
+                    <td class="attr-name">
                         <div class="edit-view"><input type="text" id="lbl-gender" value="성별"></div>
                         <span id="view-lbl-gender" class="result-view">성별</span>
                     </td>
                     <td>
                         <div class="edit-view"><input type="text" id="input-gender"></div>
-                        <div id="info-gender" class="result-view editable-click-field" onclick="switchToEditModeDirectly()"></div>
+                        <div id="info-gender" class="result-view"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td class="attr-name editable-click-field" onclick="switchToEditModeDirectly()">
+                    <td class="attr-name">
                         <div class="edit-view"><input type="text" id="lbl-hobby" value="취미"></div>
                         <span id="view-lbl-hobby" class="result-view">취미</span>
                     </td>
                     <td>
                         <div class="edit-view"><input type="text" id="input-hobby"></div>
-                        <div id="info-hobby" class="result-view editable-click-field" onclick="switchToEditModeDirectly()"></div>
+                        <div id="info-hobby" class="result-view"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td class="attr-name editable-click-field" onclick="switchToEditModeDirectly()">
+                    <td class="attr-name">
                         <div class="edit-view"><input type="text" id="lbl-age" value="나이"></div>
                         <span id="view-lbl-age" class="result-view">나이</span>
                     </td>
                     <td>
                         <div class="edit-view"><input type="text" id="input-age"></div>
-                        <div id="info-age" class="result-view editable-click-field" onclick="switchToEditModeDirectly()"></div>
+                        <div id="info-age" class="result-view"></div>
                     </td>
                 </tr>
             </tbody>
@@ -375,7 +393,7 @@
             <div class="edit-view" style="margin-bottom:8px;"><input type="text" id="input-quote" placeholder="명대사나 인용구 내용을 입력하세요"></div>
             <div id="info-quote" class="result-view" style="font-weight: bold;"></div>
             
-            <div id="info-quote-sub" class="quote-subtext result-view editable-click-field" onclick="switchToEditModeDirectly()"></div>
+            <div id="info-quote-sub" class="quote-subtext result-view"></div>
         </div>
         <div class="edit-view">
             <input type="text" id="input-quote-sub" placeholder="대사 상자 내부에 함께 표출될 작은 글씨 부가설명 (예: 3화 내용 중)" style="font-size: 12px;">
@@ -418,9 +436,9 @@
 
     <div class="btn-container">
         <button class="btn edit-view" onclick="generateCompressedLink()">완료 및 공유 링크 생성</button>
-        <div class="result-view">
+        <div id="final-action-block" class="result-view">
             <p style="margin-bottom: 10px; color: #28a745; font-weight: bold;">🎉 생성이 완료되었습니다!</p>
-            <button class="btn btn-share" onclick="copyToClipboard()">🔗 주소 복사하기</button>
+            <button class="btn btn-share" onclick="openLinkModal()">🔗 주소 관리 및 단축하기</button>
             <button class="btn btn-reset" onclick="location.href=window.location.pathname">➕ 새로 만들기</button>
         </div>
     </div>
@@ -453,8 +471,42 @@
         contentTd.style.display = (contentTd.style.display === 'none') ? 'block' : 'none';
     }
 
+    // 모달 제어 함수 버그 전면 수정 완료
     function openGuideModal() { document.getElementById('guideModal').style.display = 'flex'; }
     function closeGuideModal() { document.getElementById('guideModal').style.display = 'none'; }
+    
+    function openLinkModal() {
+        document.getElementById('modal-url-text').innerText = window.location.href;
+        document.getElementById('linkModal').style.display = 'flex';
+    }
+    function closeLinkModal() { document.getElementById('linkModal').style.display = 'none'; }
+    
+    // 모바일 및 유효 브라우저 크로스 브라우징용 예외 우회 주소 복사 핵심 로직
+    function copyModalUrl() {
+        const copyText = window.location.href;
+        const hiddenArea = document.getElementById('hidden-clip-area');
+        
+        hiddenArea.value = copyText;
+        hiddenArea.select();
+        hiddenArea.setSelectionRange(0, 99999); // 모바일 기기 대응 선택 범위 지정
+
+        try {
+            // execCommand 스크립트 실행 백업 연동
+            const successful = document.execCommand('copy');
+            if(successful) {
+                alert('긴 주소가 성공적으로 복사되었습니다! buly.kr 사이트에 붙여넣어 단축해 주세요.');
+            } else {
+                throw new Error('Fallback failed');
+            }
+        } catch (err) {
+            // navigator 기반 2차 백업 연동
+            navigator.clipboard.writeText(copyText).then(() => {
+                alert('긴 주소가 성공적으로 복사되었습니다! buly.kr 사이트에 붙여넣어 단축해 주세요.');
+            }).catch(() => {
+                alert('복사에 실패했습니다. 주소 상자의 텍스트를 전체 선택하여 수동으로 복사해 주세요.');
+            });
+        }
+    }
 
     function addCustomAttrForm(key = "", val = "") {
         const container = document.getElementById('dynamic-attr-container');
@@ -553,19 +605,14 @@
         });
     }
 
-    // 인포 칸 및 대사 부가설명 전용: 비번 검사 없이 즉시 편집모드로 오픈
-    function switchToEditModeDirectly() {
-        document.body.classList.remove('readonly');
-        setInputsDisabled(false);
-        document.getElementById('renderLoopBox').style.display = 'none'; 
-    }
-
-    // 우측 상단 메인 '수정' 버튼만 비밀번호 검증 유지
     function checkPasswordToEdit() {
         const inputPwd = prompt("비밀번호를 입력하세요:");
         if (btoa(encodeURIComponent(inputPwd)) === savedPasswordHash) {
             alert("인증 성공! 수정 모드로 전환됩니다.");
-            switchToEditModeDirectly();
+            document.body.classList.remove('readonly');
+            setInputsDisabled(false);
+            document.getElementById('renderLoopBox').style.display = 'none'; 
+            document.getElementById('final-action-block').style.display = 'none'; // 하단 제어창 숨김
         } else {
             alert("비밀번호가 일치하지 않습니다. 수정할 수 없습니다.");
         }
@@ -622,7 +669,167 @@
 
         const jsonStr = JSON.stringify(rawData);
         const compressed = LZString.compressToEncodedURIComponent(jsonStr);
-        window.location.href = window.location.origin + window.location.pathname + '?d=' + compressed;
+        
+        const finalUrl = window.location.origin + window.location.pathname + '?d=' + compressed;
+        window.history.replaceState({}, '', finalUrl);
+        
+        document.body.classList.add('readonly');
+        setInputsDisabled(true);
+        loadPageData(compressed);
+        openLinkModal();
+    }
+
+    function loadPageData(compressedData) {
+        footnoteCount = 1;
+        capturedFootnotes = [];
+        
+        const jsonStr = LZString.decompressFromEncodedURIComponent(compressedData);
+        if(!jsonStr) return;
+        
+        const data = JSON.parse(jsonStr);
+        updateThemeColor(data.color || '#008080');
+        savedPasswordHash = data.pwd || "";
+
+        document.getElementById('input-title').value = data.title;
+        document.getElementById('view-title').innerText = data.title;
+        document.getElementById('input-category').value = data.category || '';
+        document.getElementById('view-category').innerText = data.category || '없음';
+        document.getElementById('view-date').innerText = `최근 수정 시각: ${data.date || '-'}`;
+        document.getElementById('info-name-main').innerText = data.n_main || '';
+        document.getElementById('info-name-sub').innerText = data.n_sub || '';
+
+        if (data.img && data.img.trim() !== "") {
+            document.getElementById('input-img-url').value = data.img;
+            updateImagePreview(data.img);
+        }
+
+        document.getElementById('lbl-realname').value = data.lbl_realname || '본명';
+        document.getElementById('view-lbl-realname').innerText = data.lbl_realname || '본명';
+        document.getElementById('input-realname').value = data.realname || '';
+        document.getElementById('info-realname').innerText = data.realname || '-';
+
+        document.getElementById('lbl-gender').value = data.lbl_gender || '성별';
+        document.getElementById('view-lbl-gender').innerText = data.lbl_gender || '성별';
+        document.getElementById('input-gender').value = data.gender || '';
+        document.getElementById('info-gender').innerText = data.gender || '-';
+
+        document.getElementById('lbl-hobby').value = data.lbl_hobby || '취미';
+        document.getElementById('view-lbl-hobby').innerText = data.lbl_hobby || '취미';
+        document.getElementById('input-hobby').value = data.hobby || '';
+        document.getElementById('info-hobby').innerText = data.hobby || '-';
+
+        document.getElementById('lbl-age').value = data.lbl_age || '나이';
+        document.getElementById('view-lbl-age').innerText = data.lbl_age || '나이';
+        document.getElementById('input-age').value = data.age || '';
+        document.getElementById('info-age').innerText = data.age || '-';
+
+        document.getElementById('input-quote').value = data.quote || '';
+        document.getElementById('info-quote').innerText = data.quote || '';
+        document.getElementById('input-quote-sub').value = data.quote_sub || '';
+        
+        if(data.quote_sub && data.quote_sub.trim() !== "") {
+            document.getElementById('info-quote-sub').innerText = data.quote_sub;
+            document.getElementById('info-quote-sub').style.display = 'block';
+        } else {
+            document.getElementById('info-quote-sub').style.display = 'none';
+        }
+        
+        document.getElementById('input-section-body-1').value = data.body_1 || '';
+        const baseParsedHtml = `<p class="wiki-text-p">${parseFootnotes(data.body_1 || '')}</p>`;
+        document.getElementById('info-section-content-1').innerHTML = (data.sp_1 === 'y') ? buildSpoilerHtml(baseParsedHtml) : baseParsedHtml;
+
+        const tbody = document.getElementById('infobox-tbody');
+        document.querySelectorAll("tr.custom-added-tr").forEach(tr => tr.remove());
+        
+        if(data.customs) {
+            data.customs.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.className = "result-view custom-added-tr"; 
+                tr.innerHTML = `<td class="attr-name">${c.k}</td><td>${parseFootnotes(c.v)}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        const tocTarget = document.getElementById('view-toc');
+        tocTarget.innerHTML = '';
+        const resultContainer = document.getElementById('dynamic-result-container');
+        resultContainer.innerHTML = '';
+        
+        const liBase = document.createElement('li');
+        liBase.innerHTML = `<a href="#section-1"><span class="toc-num">1.</span>개요</a>`;
+        tocTarget.appendChild(liBase);
+
+        let currentMainIdx = 1;
+
+        if(data.treeSections) {
+            data.treeSections.forEach((group, groupIdx) => {
+                currentMainIdx++;
+                const computedMainTitle = `${currentMainIdx}. ${group.mainTitle}`;
+                
+                const mainLi = document.createElement('li');
+                mainLi.innerHTML = `<a href="#main-group-anchor-${groupIdx}"><span class="toc-num">${currentMainIdx}.</span>${group.mainTitle}</a>`;
+                tocTarget.appendChild(mainLi);
+
+                const groupWrapper = document.createElement('div');
+                groupWrapper.className = 'wiki-section';
+                groupWrapper.id = `main-group-anchor-${groupIdx}`;
+                groupWrapper.innerHTML = `<h2>${computedMainTitle}</h2>`;
+
+                group.subs.forEach((sub, subIdx) => {
+                    const subNumStr = `${currentMainIdx}.${subIdx + 1}`;
+                    const computedSubTitle = `${subNumStr}. ${sub.t}`;
+
+                    const subLi = document.createElement('li');
+                    subLi.className = 'toc-indent';
+                    subLi.innerHTML = `<a href="#sub-anchor-${groupIdx}-${subIdx}"><span class="toc-num">${subNumStr}.</span>${sub.t}</a>`;
+                    tocTarget.appendChild(subLi);
+
+                    const subDiv = document.createElement('div');
+                    subDiv.id = `sub-anchor-${groupIdx}-${subIdx}`;
+                    
+                    let parsedSubBody = `<p class="wiki-text-p">${parseFootnotes(sub.b || '')}</p>`;
+                    let finalSubContent = (sub.s === 'y') ? buildSpoilerHtml(parsedSubBody) : `
+                        <table class="wiki-collapse-box">
+                            <tr><th class="wiki-collapse-header"><span class="wiki-collapse-btn" onclick="toggleCollapseBox(this)">[ 펼치기 · 접기 ]</span></th></tr>
+                            <tr><td class="wiki-collapse-content">${parsedSubBody}</td></tr>
+                        </table>
+                    `;
+                    
+                    subDiv.innerHTML = `
+                        <div class="wiki-subsection-title">${computedSubTitle}</div>
+                        ${finalSubContent}
+                    `;
+                    groupWrapper.appendChild(subDiv);
+                });
+                resultContainer.appendChild(groupWrapper);
+            });
+        }
+
+        currentMainIdx++;
+        document.getElementById('input-etc-body').value = data.body_etc || '';
+        document.getElementById('input-etc-spoiler').checked = (data.sp_etc === 'y');
+        document.getElementById('view-etc-title').innerText = `${currentMainIdx}. 기타`;
+
+        const liEtc = document.createElement('li');
+        liEtc.innerHTML = `<a href="#section-etc-container"><span class="toc-num">${currentMainIdx}.</span>기타</a>`;
+        tocTarget.appendChild(liEtc);
+
+        const etcParsedHtml = parseEtcLines(data.body_etc || '');
+        document.getElementById('info-etc-content').innerHTML = (data.sp_etc === 'y') ? buildSpoilerHtml(etcParsedHtml) : etcParsedHtml;
+
+        const loopBox = document.getElementById('renderLoopBox');
+        if (capturedFootnotes.length > 0) {
+            const loopList = document.getElementById('renderLoopList');
+            loopList.innerHTML = '';
+            capturedFootnotes.forEach(note => {
+                loopList.innerHTML += `<li><span class="loop-num">[${note.num}]</span> ${note.text}</li>`;
+            });
+            loopBox.style.display = 'block';
+        } else {
+            loopBox.style.display = 'none';
+        }
+        
+        document.getElementById('final-action-block').style.display = 'block';
     }
 
     window.addEventListener('DOMContentLoaded', function() {
@@ -631,168 +838,32 @@
             document.body.classList.add('readonly');
             setInputsDisabled(true); 
             
-            footnoteCount = 1;
-            capturedFootnotes = [];
-
             const compressedData = params.get('d');
             const jsonStr = LZString.decompressFromEncodedURIComponent(compressedData);
-            if(!jsonStr) return;
-            
-            const data = JSON.parse(jsonStr);
-            updateThemeColor(data.color || '#008080');
-            savedPasswordHash = data.pwd || "";
-
-            document.getElementById('input-title').value = data.title;
-            document.getElementById('view-title').innerText = data.title;
-            document.getElementById('input-category').value = data.category || '';
-            document.getElementById('view-category').innerText = data.category || '없음';
-            document.getElementById('view-date').innerText = `최근 수정 시각: ${data.date || '-'}`;
-            document.getElementById('info-name-main').innerText = data.n_main || '';
-            document.getElementById('info-name-sub').innerText = data.n_sub || '';
-
-            if (data.img && data.img.trim() !== "") {
-                document.getElementById('input-img-url').value = data.img;
-                updateImagePreview(data.img);
-            }
-
-            document.getElementById('lbl-realname').value = data.lbl_realname || '본명';
-            document.getElementById('view-lbl-realname').innerText = data.lbl_realname || '본명';
-            document.getElementById('input-realname').value = data.realname || '';
-            document.getElementById('info-realname').innerText = data.realname || '-';
-
-            document.getElementById('lbl-gender').value = data.lbl_gender || '성별';
-            document.getElementById('view-lbl-gender').innerText = data.lbl_gender || '성별';
-            document.getElementById('input-gender').value = data.gender || '';
-            document.getElementById('info-gender').innerText = data.gender || '-';
-
-            document.getElementById('lbl-hobby').value = data.lbl_hobby || '취미';
-            document.getElementById('view-lbl-hobby').innerText = data.lbl_hobby || '취미';
-            document.getElementById('input-hobby').value = data.hobby || '';
-            document.getElementById('info-hobby').innerText = data.hobby || '-';
-
-            document.getElementById('lbl-age').value = data.lbl_age || '나이';
-            document.getElementById('view-lbl-age').innerText = data.lbl_age || '나이';
-            document.getElementById('input-age').value = data.age || '';
-            document.getElementById('info-age').innerText = data.age || '-';
-
-            document.getElementById('input-quote').value = data.quote || '';
-            document.getElementById('info-quote').innerText = data.quote || '';
-            document.getElementById('input-quote-sub').value = data.quote_sub || '';
-            
-            if(data.quote_sub && data.quote_sub.trim() !== "") {
-                document.getElementById('info-quote-sub').innerText = data.quote_sub;
-                document.getElementById('info-quote-sub').style.display = 'block';
-            } else {
-                document.getElementById('info-quote-sub').style.display = 'none';
-            }
-            
-            document.getElementById('input-section-body-1').value = data.body_1 || '';
-            const baseParsedHtml = `<p class="wiki-text-p">${parseFootnotes(data.body_1 || '')}</p>`;
-            document.getElementById('info-section-content-1').innerHTML = (data.sp_1 === 'y') ? buildSpoilerHtml(baseParsedHtml) : baseParsedHtml;
-
-            if(data.customs) {
-                const tbody = document.getElementById('infobox-tbody');
-                data.customs.forEach(c => {
-                    addCustomAttrForm(c.k, c.v);
-                    const tr = document.createElement('tr');
-                    tr.className = "result-view"; 
-                    tr.innerHTML = `<td class="attr-name editable-click-field" onclick="switchToEditModeDirectly()">${c.k}</td><td>${parseFootnotes(c.v)}</td>`;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            const tocTarget = document.getElementById('view-toc');
-            const resultContainer = document.getElementById('dynamic-result-container');
-            
-            const liBase = document.createElement('li');
-            liBase.innerHTML = `<a href="#section-1"><span class="toc-num">1.</span>개요</a>`;
-            tocTarget.appendChild(liBase);
-
-            let currentMainIdx = 1;
-
-            if(data.treeSections) {
-                document.getElementById('main-section-builder-container').innerHTML = '';
-                data.treeSections.forEach((group, groupIdx) => {
-                    addMainSectionGroup(group.mainTitle);
-                    const currentMainBtn = document.querySelectorAll('.main-section-group')[groupIdx].querySelector('.btn');
-                    
-                    currentMainIdx++;
-                    const computedMainTitle = `${currentMainIdx}. ${group.mainTitle}`;
-                    
-                    const mainLi = document.createElement('li');
-                    mainLi.innerHTML = `<a href="#main-group-anchor-${groupIdx}"><span class="toc-num">${currentMainIdx}.</span>${group.mainTitle}</a>`;
-                    tocTarget.appendChild(mainLi);
-
-                    const groupWrapper = document.createElement('div');
-                    groupWrapper.className = 'wiki-section';
-                    groupWrapper.id = `main-group-anchor-${groupIdx}`;
-                    groupWrapper.innerHTML = `<h2>${computedMainTitle}</h2>`;
-
-                    group.subs.forEach((sub, subIdx) => {
-                        addSubSectionField(currentMainBtn, sub.t, sub.b, sub.s === 'y');
-
-                        const subNumStr = `${currentMainIdx}.${subIdx + 1}`;
-                        const computedSubTitle = `${subNumStr}. ${sub.t}`;
-
-                        const subLi = document.createElement('li');
-                        subLi.className = 'toc-indent';
-                        subLi.innerHTML = `<a href="#sub-anchor-${groupIdx}-${subIdx}"><span class="toc-num">${subNumStr}.</span>${sub.t}</a>`;
-                        tocTarget.appendChild(subLi);
-
-                        const subDiv = document.createElement('div');
-                        subDiv.id = `sub-anchor-${groupIdx}-${subIdx}`;
-                        
-                        let parsedSubBody = `<p class="wiki-text-p">${parseFootnotes(sub.b || '')}</p>`;
-                        let finalSubContent = (sub.s === 'y') ? buildSpoilerHtml(parsedSubBody) : `
-                            <table class="wiki-collapse-box">
-                                <tr><th class="wiki-collapse-header"><span class="wiki-collapse-btn" onclick="toggleCollapseBox(this)">[ 펼치기 · 접기 ]</span></th></tr>
-                                <tr><td class="wiki-collapse-content">${parsedSubBody}</td></tr>
-                            </table>
-                        `;
-                        
-                        subDiv.innerHTML = `
-                            <div class="wiki-subsection-title">${computedSubTitle}</div>
-                            ${finalSubContent}
-                        `;
-                        groupWrapper.appendChild(subDiv);
+            if(jsonStr){
+                const data = JSON.parse(jsonStr);
+                if(data.customs){
+                    data.customs.forEach(c => addCustomAttrForm(c.k, c.v));
+                }
+                if(data.treeSections){
+                    document.getElementById('main-section-builder-container').innerHTML = '';
+                    data.treeSections.forEach((group, groupIdx) => {
+                        addMainSectionGroup(group.mainTitle);
+                        const currentMainBtn = document.querySelectorAll('.main-section-group')[groupIdx].querySelector('.btn');
+                        group.subs.forEach(sub => {
+                            addSubSectionField(currentMainBtn, sub.t, sub.b, sub.s === 'y');
+                        });
                     });
-
-                    resultContainer.appendChild(groupWrapper);
-                });
+                }
             }
-
-            currentMainIdx++;
-            document.getElementById('input-etc-body').value = data.body_etc || '';
-            document.getElementById('input-etc-spoiler').checked = (data.sp_etc === 'y');
-            document.getElementById('view-etc-title').innerText = `${currentMainIdx}. 기타`;
-
-            const liEtc = document.createElement('li');
-            liEtc.innerHTML = `<a href="#section-etc-container"><span class="toc-num">${currentMainIdx}.</span>기타</a>`;
-            tocTarget.appendChild(liEtc);
-
-            const etcParsedHtml = parseEtcLines(data.body_etc || '');
-            document.getElementById('info-etc-content').innerHTML = (data.sp_etc === 'y') ? buildSpoilerHtml(etcParsedHtml) : etcParsedHtml;
-
-            const etcContainer = document.getElementById('section-etc-container');
-            resultContainer.parentNode.insertBefore(etcContainer, resultContainer.nextSibling);
-
-            const loopBox = document.getElementById('renderLoopBox');
-            if (capturedFootnotes.length > 0) {
-                const loopList = document.getElementById('renderLoopList');
-                loopList.innerHTML = '';
-                capturedFootnotes.forEach(note => {
-                    loopList.innerHTML += `<li><span class="loop-num">[${note.num}]</span> ${note.text}</li>`;
-                });
-                loopBox.style.display = 'block';
-            }
+            loadPageData(compressedData);
         } else {
             openGuideModal();
             addMainSectionGroup("특징");
             addMainSectionGroup("작중 행적");
+            document.getElementById('final-action-block').style.display = 'none';
         }
     });
-
-    function copyToClipboard() { navigator.clipboard.writeText(window.location.href).then(() => alert('공유 주소가 복사되었습니다!')); }
 
     function showPopup(event, text) {
         event.stopPropagation();
