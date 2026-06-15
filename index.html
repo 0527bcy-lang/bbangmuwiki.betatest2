@@ -107,7 +107,7 @@
         .infobox .image-cell { text-align: center; padding: 15px; background: #fafafa; }
         .infobox .image-cell img { max-width: 100%; height: auto; display: block; margin: 0 auto; max-height: 300px; object-fit: contain; border: 1px solid #eee; background: #fff; }
         
-        /* 왼쪽 오른쪽 비율 50:50 절대 고정 */
+        /* 비율 고정 */
         .infobox .attr-name { 
             background-color: var(--theme-color); 
             color: #ffffff; 
@@ -150,11 +150,10 @@
         textarea { height: 120px; resize: none; }
         .spoiler-checkbox-label { font-size: 13px; color: #d9534f; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 5px; cursor: pointer; }
 
-        /* 개요 칸 대사 박스 및 상자 내부 부가설명 */
+        /* 상자 레이아웃 */
         .quote-box { border: 1px solid #ccc; border-left: 5px solid var(--theme-color); background-color: #f5fafd; padding: 15px; margin: 10px 0 15px 0; }
         .quote-subtext { font-size: 12px; color: #666; margin-top: 8px; padding-left: 2px; font-weight: normal; border-top: 1px solid #e2edf5; padding-top: 6px; }
         
-        /* 본문/소제목 상자 레이아웃 */
         .wiki-section { margin-top: 30px; scroll-margin-top: 20px; }
         .wiki-section h2 { font-size: 24px; border-bottom: 1px solid #ccc; padding-bottom: 3px; margin-bottom: 12px; }
         .wiki-subsection-title { font-size: 19px; margin-top: 15px; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 2px; font-weight: bold; }
@@ -167,7 +166,6 @@
         .wiki-text-p { margin-bottom: 14px; text-align: justify; font-size: 14.5px; white-space: pre-wrap; }
         .wiki-text-p.etc-p { padding-left: 15px; text-indent: -15px; }
 
-        /* 대문단 빌더 디자인 */
         .main-section-group { background: #fdfdfd; border: 2px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; position: relative; cursor: grab; user-select: none; }
         .main-section-group.dragging { opacity: 0.5; background: #f0fdf4; border-color: #28a745; }
         .drag-header-bar { display: flex; justify-content: space-between; align-items: center; background: #eee; padding: 4px 8px; margin-bottom: 8px; border-radius: 4px; }
@@ -187,32 +185,21 @@
         .footnote:hover { text-decoration: underline; }
         .footnote-popup { display: none; position: absolute; background: #373a3c; color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 12px; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); max-width: 250px; line-height: 1.4; word-break: break-all; }
 
-        /* 하단 둘러보기 영역 */
         .loop-box { margin-top: 35px; border-top: 2px solid var(--theme-color); padding-top: 15px; }
         .loop-title { font-size: 24px; font-weight: bold; margin-bottom: 12px; color: #000; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
         .loop-list { list-style: none; padding-left: 5px; }
         .loop-list li { font-size: 14.5px; margin-bottom: 8px; color: #373a3c; text-align: justify; line-height: 1.6; }
         .loop-num { color: #0275d8; font-weight: bold; margin-right: 6px; }
 
-        /* 가이드 팝업 모달 */
+        /* 시작 가이드 모달 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .modal-content { background: #fff; padding: 25px; border-radius: 8px; max-width: 540px; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-height: 85vh; overflow-y: auto; }
         .modal-title { font-size: 19px; font-weight: bold; color: var(--theme-color); margin-bottom: 15px; border-bottom: 2px solid var(--theme-color); padding-bottom: 5px; }
         .modal-section { margin-bottom: 15px; font-size: 13.5px; line-height: 1.6; }
         .modal-section h4 { margin-bottom: 5px; color: #111; font-weight: bold; }
-        .modal-section ul { padding-left: 18px; margin-top: 4px; }
-        .modal-section li { margin-bottom: 3px; }
-        
-        /* 모달 제어용 상시 활성화 버튼 */
         .modal-btn { background: var(--theme-color); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
         .modal-btn:hover { filter: brightness(0.9); }
         
-        /* 단축 링크 전용 모달 양식 */
-        .url-display-box { background: #f8f9fa; border: 1px solid #ccc; padding: 10px; font-size: 12px; max-height: 80px; overflow-y: auto; word-break: break-all; margin: 10px 0; border-radius: 4px; color: #666; user-select: all; }
-        .buly-link-btn { display: inline-block; background-color: #28a745; color: white !important; text-decoration: none; padding: 8px 15px; font-weight: bold; border-radius: 4px; margin-top: 5px; font-size: 13px; }
-        .buly-link-btn:hover { background-color: #218838; }
-        
-        /* 클립보드 복사 백업용 히든 필드 */
         #hidden-clip-area { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; opacity: 0; }
     </style>
 </head>
@@ -223,42 +210,15 @@
 <div id="guideModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <div class="modal-title">📝 나무위키 프로필 생성기 사용 방법 안내</div>
-        
         <div class="modal-section">
             <h4 style="color: #d9534f;">🔒 문서 비밀번호 필수 설정</h4>
-            <p style="color: #d9534f; font-weight: bold;">타인이 문단을 무단 수정하는 것을 막기 위해 비밀번호 입력이 필수로 변경되었습니다. 암호화 저장되므로 분실 시 재확인이 불가하니 꼭 기억하세요!</p>
+            <p style="color: #d9534f; font-weight: bold;">타인의 무단 수정을 막기 위해 비밀번호 입력이 필수입니다. 분실 시 재확인이 불가하므로 안전하게 메모해 두세요!</p>
         </div>
-
         <div class="modal-section">
             <h4>📌 각주(설명 팝업) 넣는 법</h4>
-            <p>본문 내용 중 설명이나 보충을 넣고 싶은 단어 바로 뒤에 <code>[여기에 각주 내용 입력]</code> 형태로 대괄호를 붙여 기입하세요.</p>
+            <p>본문 내용 중 보충을 넣고 싶은 단어 뒤에 <code>[여기에 각주 내용 입력]</code> 형태로 기입하세요.</p>
         </div>
-
-        <div class="modal-section">
-            <h4>🖼️ 사진 링크 주소 넣는 법</h4>
-            <p>인터넷 이미지 변환 도구를 통해 추출된 <code>https://...</code> 주소를 프로필 이미지 칸에 기입해 주셔야 실시간 노출됩니다.</p>
-        </div>
-
         <button type="button" class="modal-btn" onclick="closeGuideModal()">가이드를 확인했으며 작성을 시작하겠습니다</button>
-    </div>
-</div>
-
-<div id="linkModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 480px;">
-        <div class="modal-title">🔗 공유 링크 생성 완료</div>
-        <div class="modal-section" style="font-size: 13px;">
-            <p>데이터가 포함된 고유 프로필 링크가 정상 발급되었습니다. 다만, 시스템 데이터 용량으로 인해 <b>아래 링크 주소가 매우 깁니다.</b></p>
-            <div id="modal-url-text" class="url-display-box"></div>
-            
-            <p style="margin-top: 12px; color: #d9534f; font-weight: bold;">⚠️ 필독 사항:</p>
-            <p style="color: #444;">아래 초록색 버튼을 눌러 <b>buly.kr</b> 사이트로 이동하신 뒤, 복사한 긴 링크를 붙여넣어 <b>짧은 단축 링크</b>로 변환해서 사용하시기를 강력히 권장합니다!</p>
-            
-            <div style="text-align: center; margin-top: 15px; display: flex; gap: 8px; justify-content: center;">
-                <button type="button" class="modal-action-trigger" style="padding: 8px 15px; font-size:13px; background:#007bff; color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;" onclick="copyModalUrl()">📋 긴 주소 우선 복사</button>
-                <a href="https://buly.kr" target="_blank" class="buly-link-btn">➡️ buly.kr 사이트 이동</a>
-            </div>
-        </div>
-        <button type="button" class="modal-btn" style="background:#6c757d; margin-top: 15px;" onclick="closeLinkModal()">닫기</button>
     </div>
 </div>
 
@@ -296,9 +256,6 @@
                 <label for="input-password" style="color:#d9534f;">⚠️ 필수 비밀번호:</label>
                 <input type="text" id="input-password" placeholder="필수 암호 설정" maxlength="12">
             </div>
-        </div>
-        <div class="recommend-url-box">
-            🔗 <b>사진 링크 변환 추천:</b> 이미지를 인터넷 링크 주소로 바꾸려면 <a href="https://pages.edgeone.ai/ko/use-cases/image-to-url" target="_blank">[EdgeOne 이미지 URL 변환 도구]</a> 사이트를 이용해 주세요.
         </div>
     </div>
 
@@ -434,7 +391,7 @@
         <button type="button" class="btn edit-view" onclick="generateCompressedLink()">완료 및 공유 링크 생성</button>
         <div id="final-action-block" class="result-view">
             <p style="margin-bottom: 10px; color: #28a745; font-weight: bold;">🎉 생성이 완료되었습니다!</p>
-            <button type="button" class="btn btn-share" onclick="openLinkModal()">🔗 주소 관리 및 단축하기</button>
+            <button type="button" class="btn btn-share" onclick="handleShareAction()">🔗 주소 관리 및 단축하기</button>
             <button type="button" class="btn btn-reset" onclick="location.href=window.location.pathname">➕ 새로 만들기</button>
         </div>
     </div>
@@ -467,18 +424,11 @@
         contentTd.style.display = (contentTd.style.display === 'none') ? 'block' : 'none';
     }
 
-    /* 팝업 모달 작동 버그 전면 수정 */
     function openGuideModal() { document.getElementById('guideModal').style.display = 'flex'; }
     function closeGuideModal() { document.getElementById('guideModal').style.display = 'none'; }
     
-    function openLinkModal() {
-        document.getElementById('modal-url-text').innerText = window.location.href;
-        document.getElementById('linkModal').style.display = 'flex';
-    }
-    function closeLinkModal() { document.getElementById('linkModal').style.display = 'none'; }
-    
-    /* iOS 및 하위 모바일 환경 완벽 대응 클립보드 복사 백업 우회 처리 */
-    function copyModalUrl() {
+    /* 팝업 레이아웃 제거 -> 브라우저 네이티브 프롬프트+자동 복사 조합으로 변경 */
+    function handleShareAction() {
         const copyText = window.location.href;
         const hiddenArea = document.getElementById('hidden-clip-area');
         
@@ -487,20 +437,26 @@
         hiddenArea.select();
         hiddenArea.setSelectionRange(0, 99999);
 
+        let isCopied = false;
         try {
-            const successful = document.execCommand('copy');
-            if(successful) {
-                alert('긴 주소가 성공적으로 복사되었습니다! buly.kr 사이트에 붙여넣어 단축해 주세요.');
-            } else {
-                throw new Error('execCommand 실패');
-            }
+            isCopied = document.execCommand('copy');
         } catch (err) {
-            navigator.clipboard.writeText(copyText).then(() => {
-                alert('긴 주소가 성공적으로 복사되었습니다! buly.kr 사이트에 붙여넣어 단축해 주세요.');
-            }).catch(() => {
-                alert('브라우저 보안으로 자동 복사가 차단되었습니다. 주소창의 긴 문자열을 전체선택해 수동 복사바랍니다.');
-            });
+            isCopied = false;
         }
+
+        if (!isCopied) {
+            navigator.clipboard.writeText(copyText).then(() => { isCopied = true; });
+        }
+
+        // 알림 메시지와 함께 단축 사이트 이동 안내 가이드 노출
+        alert(
+            "🔗 [공유 링크 복사 완료]\n\n" +
+            "용량 압축 처리가 적용된 매우 긴 고유 주소가 클립보드에 자동 복사되었습니다.\n\n" +
+            "확인을 누르시면 단축 링크 사이트(buly.kr)로 연결됩니다. " +
+            "그곳에 붙여넣기(Ctrl+V)하여 짧은 주소로 변환 후 공유하세요!"
+        );
+        
+        window.open("https://buly.kr", "_blank");
     }
 
     function addCustomAttrForm(key = "", val = "") {
@@ -594,9 +550,8 @@
         }
     });
 
-    /* 잠금 상태 제어 시 모달창 내부 전용 클래스(.modal-btn, .modal-action-trigger)는 제외하여 닫기 먹통 방지 */
     function setInputsDisabled(status) {
-        document.querySelectorAll("input, textarea, button:not(.btn-mini-edit):not(.btn-share):not(.btn-reset):not(.btn-open-guide):not(.modal-btn):not(.modal-action-trigger)").forEach(el => {
+        document.querySelectorAll("input, textarea, button:not(.btn-mini-edit):not(.btn-share):not(.btn-reset):not(.btn-open-guide)").forEach(el => {
             el.disabled = status;
         });
     }
@@ -618,7 +573,7 @@
         const title = document.getElementById('input-title').value.trim();
         if (!title) return alert('제목은 필수 입력 요소입니다!');
 
-        /* 제목 외 비밀번호 설정 필수 예외 벨리데이션 추가 */
+        /* 비밀번호 필수 입력 유효성 검사 고정 */
         const password = document.getElementById('input-password').value.trim();
         if (!password) {
             alert('🔒 타인의 무단 수정을 막기 위해 비밀번호 설정은 필수입니다!\n인포박스 상단 가이드 레이아웃 우측의 비밀번호 칸을 채워주세요.');
@@ -680,7 +635,9 @@
         document.body.classList.add('readonly');
         setInputsDisabled(true);
         loadPageData(compressed);
-        openLinkModal();
+        
+        // 생성 즉시 알림 가이드 노출
+        handleShareAction();
     }
 
     function loadPageData(compressedData) {
