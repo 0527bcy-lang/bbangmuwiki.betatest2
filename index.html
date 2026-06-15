@@ -25,6 +25,10 @@
         body.readonly .result-view { display: block !important; }
         body.readonly tr.result-view { display: table-row !important; }
 
+        /* 링크를 통해 readonly 상태로 들어왔을 때 상하단의 모든 거추장스러운 편집/안내 요소를 차단 */
+        body.readonly .guide-box { display: none !important; }
+        body.readonly .btn-container { display: none !important; }
+
         /* 최상단 오른쪽 마지막 변경 날짜 */
         .last-modified {
             text-align: right;
@@ -128,8 +132,22 @@
         .guide-box b { color: #245269; }
         .guide-box label { font-weight: bold; margin-right: 10px; color: #373a3c; }
         input[type="color"] { vertical-align: middle; width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
-        .pwd-input-group { display: inline-block; margin-left: 15px; }
-        .pwd-input-group input { width: 120px; padding: 4px; font-size: 12px; border: 1px solid #f0ad4e; border-radius: 3px; background-color: #fff3cd; }
+        
+        .pwd-input-group { display: inline-flex; align-items: center; margin-left: 15px; gap: 8px; }
+        .pwd-input-group input { width: 120px; padding: 5px; font-size: 12px; border: 1px solid #f0ad4e; border-radius: 3px; background-color: #fff3cd; margin-bottom: 0; }
+        
+        /* 비밀번호 입력칸 옆 전용 미니 버튼 스타일 */
+        .btn-inline-url {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-inline-url:hover { background-color: #0056b3; }
 
         /* 목차 */
         .toc-container { border: 1px solid #ccc; background: #fdfdfd; padding: 14px; display: inline-block; min-width: 280px; margin-bottom: 25px; font-size: 14px; }
@@ -188,7 +206,6 @@
         .loop-list li { font-size: 14.5px; margin-bottom: 8px; color: #373a3c; text-align: justify; line-height: 1.6; }
         .loop-num { color: #0275d8; font-weight: bold; margin-right: 6px; }
 
-        /* 수동 전체 선택 및 복사용 텍스트 박스 */
         .manual-url-box {
             background-color: #f8f9fa;
             border: 1px solid #ddd;
@@ -229,7 +246,19 @@
         </div>
         <div class="modal-section">
             <h4>📌 각주(설명 팝업) 넣는 법</h4>
-            <p>본문 내용 중 보충을 넣고 싶은 단어 뒤에 <code>[여기에 각주 내용 입력]</code> 형태로 기입하세요.</p>
+            <p>본문 내용 중 보충 설명을 넣고 싶은 단어 바로 뒤에 <code>[여기에 각주 내용 입력]</code> 형태로 대괄호 기호를 사용해 기입하시면 자동으로 본문에 넘버링 링크가 생기며, 마우스를 올리거나 클릭 시 팝업 가이드 창이 표출됩니다.</p>
+        </div>
+        <div class="modal-section">
+            <h4>🖼️ 프로필 사진 주소 변경 및 업로드 방법</h4>
+            <p>인포박스 내부에 있는 이미지 주소 입력 칸에 본인이 소유한 이미지 파일의 직접 링크 URL(https://...로 시작하고 .png, .jpg 등으로 끝나는 형태)을 넣으시면 실시간으로 감지하여 위키 인포박스 내부 사진이 자동으로 변경됩니다. 외부 이미지 호스팅 사이트나 디스코드 링크 등을 활용하세요. 소지하고 계신 이미지를 즉시 주소 링크로 변환하려면 다음 사이트를 참고하여 변경하시면 편리합니다: <a href="https://pages.edgeone.ai/ko/use-cases/image-to-url" target="_blank" style="color:#0275d8; font-weight:bold; text-decoration:underline;">https://pages.edgeone.ai/ko/use-cases/image-to-url</a></p>
+        </div>
+        <div class="modal-section">
+            <h4>📂 대문단 및 하위 소제목 만드는 법</h4>
+            <p>하단의 '추가 본문 및 하위 소제목 관리창' 레이아웃을 통해 새로운 대문단을 얼마든지 확장할 수 있습니다. <b>[내부 하위 소제목 추가]</b> 버튼을 누르면 해당 대문단 안으로 귀속되는 세부 소제목(예: 2.1, 2.2 형태) 문단과 텍스트 필드가 생성되며, 드래그 앤 드롭으로 문단 간의 노출 배치 순서를 자유롭게 실시간 스왑 변경할 수 있습니다.</p>
+        </div>
+        <div class="modal-section">
+            <h4>📌 기타 (맨 아래 고정 문단) 작성 방법</h4>
+            <p>맨 아래에 고정되어 있는 '기타' 란은 줄바꿈(엔터)을 하실 때마다 나무위키 특유의 <b>하이픈 목록 기호(- 내용)</b> 스타일 규칙이 자동으로 본문 결과창에 적용되어 출력됩니다. 별도의 서식 기호를 직접 적지 마시고 편하게 줄바꿈으로만 내용을 구분하여 작성해 주세요.</p>
         </div>
         <button type="button" class="modal-btn" onclick="closeGuideModal()">가이드를 확인했으며 작성을 시작하겠습니다</button>
     </div>
@@ -260,7 +289,7 @@
         <span id="view-category" class="result-view"></span>
     </div>
 
-    <div class="guide-box edit-view">
+    <div class="guide-box">
         <div style="margin-bottom: 8px;">
             <label for="input-color">🎨 테마 색상 선택:</label>
             <input type="color" id="input-color" value="#008080" onchange="updateThemeColor(this.value)">
@@ -268,6 +297,7 @@
             <div class="pwd-input-group">
                 <label for="input-password" style="color:#d9534f;">⚠️ 필수 비밀번호:</label>
                 <input type="text" id="input-password" placeholder="필수 암호 설정" maxlength="12">
+                <button type="button" class="btn-inline-url edit-view" onclick="handleImageUrlHelperAction()">🖼️ 이미지 주소 변환기</button>
             </div>
         </div>
     </div>
@@ -405,10 +435,10 @@
         <div id="final-action-block" class="result-view">
             <p style="margin-bottom: 10px; color: #28a745; font-weight: bold;">🎉 생성이 완료되었습니다!</p>
             
-            <div style="font-size:12px; color:#666; font-weight:bold; margin-bottom:4px;">⬇️ 주소가 안 복사될 시 아래 박스를 꾹 눌러 전체 복사 하세요.</div>
+            <div style="font-size:12px; color:#666; font-weight:bold; margin-bottom:4px;">⬇️ 아래 박스를 꾹 눌러서 생성된 전체 주소를 복사하실 수 있습니다.</div>
             <div id="text-url-display" class="manual-url-box"></div>
 
-            <button type="button" class="btn btn-share" onclick="handleShareAction()">🔗 주소 관리 및 단축하기</button>
+            <button type="button" class="btn btn-share" onclick="handleShareAction()">🔗 주소 단축 사이트 이동</button>
             <button type="button" class="btn btn-reset" onclick="location.href=window.location.pathname">➕ 새로 만들기</button>
         </div>
     </div>
@@ -444,35 +474,12 @@
     function openGuideModal() { document.getElementById('guideModal').style.display = 'flex'; }
     function closeGuideModal() { document.getElementById('guideModal').style.display = 'none'; }
     
-    /* 팝업 완전 제거 버전 핸들러 */
     function handleShareAction() {
-        const copyText = window.location.href;
-        const hiddenArea = document.getElementById('hidden-clip-area');
-        
-        hiddenArea.value = copyText;
-        hiddenArea.focus();
-        hiddenArea.select();
-        hiddenArea.setSelectionRange(0, 99999);
-
-        let isCopied = false;
-        try {
-            isCopied = document.execCommand('copy');
-        } catch (err) {
-            isCopied = false;
-        }
-
-        if (!isCopied) {
-            navigator.clipboard.writeText(copyText).then(() => { isCopied = true; });
-        }
-
-        alert(
-            "🔗 긴 주소 복사 시도 완료!\n\n" +
-            "확인을 누르면 buly.kr(단축 링크 사이트)로 즉시 이동합니다.\n" +
-            "이동한 사이트에 붙여넣기(Ctrl+V)하여 짧게 줄여 사용하세요.\n\n" +
-            "※ 자동 복사가 차단된 경우, 버튼 위의 텍스트 상자를 꾹 눌러서 복사해 주세요."
-        );
-        
         window.open("https://buly.kr", "_blank");
+    }
+
+    function handleImageUrlHelperAction() {
+        window.open("https://pages.edgeone.ai/ko/use-cases/image-to-url", "_blank");
     }
 
     function addCustomAttrForm(key = "", val = "") {
@@ -567,7 +574,7 @@
     });
 
     function setInputsDisabled(status) {
-        document.querySelectorAll("input, textarea, button:not(.btn-mini-edit):not(.btn-share):not(.btn-reset):not(.btn-open-guide)").forEach(el => {
+        document.querySelectorAll("input, textarea, button:not(.btn-mini-edit):not(.btn-share):not(.btn-reset):not(.btn-open-guide):not(.btn-inline-url)").forEach(el => {
             el.disabled = status;
         });
     }
@@ -591,7 +598,7 @@
 
         const password = document.getElementById('input-password').value.trim();
         if (!password) {
-            alert('🔒 타인의 무단 수정을 막기 위해 비밀번호 설정은 필수입니다!\n인포박스 상단 가이드 레이아웃 우측의 비밀번호 칸을 채워주세요.');
+            alert('🔒 비밀번호 설정은 필수입니다.');
             document.getElementById('input-password').focus();
             return;
         }
@@ -802,7 +809,6 @@
             loopBox.style.display = 'none';
         }
         
-        // 박스 안에 주소를 찍어두어 모바일에서 길게 눌러 수동 복사가 가능하도록 지원
         document.getElementById('text-url-display').innerText = window.location.href;
         document.getElementById('final-action-block').style.display = 'block';
     }
